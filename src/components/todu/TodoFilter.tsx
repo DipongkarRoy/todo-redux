@@ -8,10 +8,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "../ui/button";
-import { useState } from "react";
+type TodoFilterProps = {
+  priority: string;
+  setPriority: React.Dispatch<React.SetStateAction<string>>;
+};
 
-const TodoFilter = () => {
-  const [position, setPosition] = useState("bottom");
+
+const TodoFilter = ({priority ,setPriority}:TodoFilterProps) => {
+ 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -20,7 +24,7 @@ const TodoFilter = () => {
       <DropdownMenuContent className="w-56">
         <DropdownMenuLabel>Tasks Condition Term </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuRadioGroup value={position} onValueChange={setPosition}>
+        <DropdownMenuRadioGroup value={priority} onValueChange={setPriority}>
           <DropdownMenuRadioItem value="high">High</DropdownMenuRadioItem>
           <DropdownMenuRadioItem value="medium">Mediun</DropdownMenuRadioItem>
           <DropdownMenuRadioItem value="low">Low</DropdownMenuRadioItem>

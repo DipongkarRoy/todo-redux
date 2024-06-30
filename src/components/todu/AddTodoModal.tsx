@@ -1,30 +1,48 @@
-
 import { Button } from "../ui/button";
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../ui/dialog";
 import { Label } from "@radix-ui/react-label";
 import { Input } from "../ui/input";
 import { FormEvent, useState } from "react";
-import { useAppDispatch } from "@/redux/hook";
-import { addTodos } from "@/redux/features/todoSlice";
-
+// import { useAppDispatch } from "@/redux/hook";
+// import { addTodos } from "@/redux/features/todoSlice";
+import { useAddTodosMutation } from "@/redux/api/api";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "../ui/select";
 
 const AddTodoModal = () => {
-  const dispacth = useAppDispatch();
+  //local state change data :
+  //const dispacth = useAppDispatch();
+
+  //server state change data:
+  const [addTodos, { data, isLoading, isSuccess, isError }] =
+    useAddTodosMutation();
+  console.log({ isLoading, isSuccess, isError, data });
   const [tasks, setTasks] = useState("");
   const [description, setDescription] = useState("");
+  const [priority, setPriority] = useState("");
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
 
-    const tasksRandom = Math.random().toString(36).substring(2, 7);
     const tasksDetails = {
-      id: tasksRandom,
       title: tasks,
-      description: description,
+      description,
+      iscomplete: false,
+      priority
     };
-    dispacth(addTodos(tasksDetails));
-  };
 
+    //local state change data:
+    //dispacth(addTodos(tasksDetails));
+    console.log('inside addTodos' ,tasksDetails);
+    addTodos(tasksDetails);
+  };
 
   return (
     <Dialog>
@@ -61,10 +79,25 @@ const AddTodoModal = () => {
               className="col-span-3"
             />
           </div>
-          <div>
-         
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label className="text-right">priority</Label>
+            <Select onValueChange={(value)=>setPriority(value)}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Select a tasks" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>tasks</SelectLabel>
+                  <SelectItem value="high">High</SelectItem>
+                  <SelectItem value="medium">Medium</SelectItem>
+                  <SelectItem value="low">Low</SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex justify-end">
             <DialogClose asChild>
-            <Button type="submit">Save changes</Button>
+              <Button type="submit">Save changes</Button>
             </DialogClose>
           </div>
         </form>

@@ -1,38 +1,73 @@
-import { removeTodos, toggleTodos } from "@/redux/features/todoSlice";
-import { useAppDispatch } from "@/redux/hook";
+import { useUpdateTodosMutation } from "@/redux/api/api";
+// import { editTodo, removeTodos, toggleTodos } from "@/redux/features/todoSlice";
+// import { useAppDispatch } from "@/redux/hook";
 
 type TTodoCardType = {
-  id: string;
+  _id: string;
   title: string;
   description: string;
   iscomplete?: boolean;
+  priority?: string;
 };
 
-const ToduCard = ({ title, description, id, iscomplete }: TTodoCardType) => {
-  const dispatch = useAppDispatch();
+const ToduCard = ({
+  title,
+  description,
+  _id,
+  iscomplete,
+  priority,
+}: TTodoCardType) => {
+  const [updateTodos, { isLoading }] = useUpdateTodosMutation();
 
   const handelToggleTodo = () => {
-    dispatch(toggleTodos(id));
+    if (isLoading) {
+      return false;
+    }
+    const options = {
+      id: _id,
+      data: {
+        title,
+        description,
+        iscomplete:!iscomplete,
+        priority,
+      },
+    };
+    updateTodos(options);
   };
-
 
   return (
     <div className="flex justify-between items-center border border-teal-200 rounded-md p-2">
-      <input onClick={handelToggleTodo} type="checkbox" name="" id="" />
-      <h1 className="font-semibold">{title}</h1>
-      <p>{description}</p>
-      <div>
-      {!iscomplete ? (
+      <input
+        onClick={handelToggleTodo}
+        className="mr-3"
+        type="checkbox"
+        name=""
+        id=""
+      />
+      <h1 className="font-semibold flex-1">{title}</h1>
+
+      <div className="flex-1 items-center">
+        <div
+          className={`size-3 rounded-full 
+          ${priority === "high" ? "bg-red-500" : null}
+          ${priority === "medium" ? "bg-yellow-500" : null}
+          ${priority === "low" ? "bg-green-500" : null}
+          `}
+        >
+          <p>{priority}</p>
+        </div>
+      </div>
+      <div className="flex-1">
+        {iscomplete ? (
           <p className="text-red-500 text-1xl">done</p>
         ) : (
           <p className="text-green-500 text-1xl">pending</p>
         )}
       </div>
+      <p className="flex-[2]">{description}</p>
+
       <div className="space-x-10">
-        <button
-          onClick={() => dispatch(removeTodos(id))}
-          className="bg-red-500 p-2 rounded"
-        >
+        <button className="bg-red-500 p-2 rounded">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
